@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+<head>
+    <title>Envoyer un document à signer</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input, textarea { width: 100%; max-width: 500px; padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
+        button { background-color: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background-color: #0056b3; }
+        .help-text { font-size: 12px; color: #666; margin-top: 5px; }
+        .example { background: #f8f9fa; padding: 10px; margin: 10px 0; border-radius: 4px; font-family: monospace; font-size: 12px; }
+    </style>
+</head>
+<body>
+<h1>Signature via OKSign (itsme)</h1>
+
+<div class="help-text" style="background: #e7f3ff; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
+    <h3>Comment obtenir le Base64 d'un PDF :</h3>
+    <ol>
+        <li>Ouvrez un convertisseur en ligne comme <strong>base64encode.org</strong></li>
+        <li>Uploadez votre fichier PDF</li>
+        <li>Copiez le résultat Base64 (sans le préfixe "data:application/pdf;base64,")</li>
+        <li>Collez-le dans le champ ci-dessous</li>
+    </ol>
+</div>
+
+<form th:action="@{/web/submit}" method="post">
+    <div class="form-group">
+        <label for="firstName">Prénom :</label>
+        <input type="text" id="firstName" name="firstName" placeholder="Sebastien" required/>
+    </div>
+
+    <div class="form-group">
+        <label for="lastName">Nom :</label>
+        <input type="text" id="lastName" name="lastName" placeholder="De Laet" required/>
+    </div>
+
+    <div class="form-group">
+        <label for="email">Email :</label>
+        <input type="email" id="email" name="email" placeholder="exemple@email.com" required/>
+    </div>
+
+    <div class="form-group">
+        <label for="gsm">GSM (format international) :</label>
+        <input type="text" id="gsm" name="gsm" placeholder="+32489123456" required/>
+        <div class="help-text">Format : +32 suivi du numéro sans le 0 initial</div>
+    </div>
+
+    <div class="form-group">
+        <label for="fileName">Nom du fichier :</label>
+        <input type="text" id="fileName" name="fileName" placeholder="document.pdf" required/>
+        <div class="help-text">Incluez l'extension .pdf</div>
+    </div>
+
+    <div class="form-group">
+        <label for="base64Content">Contenu Base64 du document :</label>
+        <textarea id="base64Content" name="base64Content" rows="8" cols="60"
+                  placeholder="Collez ici le contenu Base64 de votre PDF..." required></textarea>
+        <div class="help-text">
+            Le Base64 doit commencer par quelque chose comme : JVBERi0xLjQK...
+            <br/>Ne pas inclure le préfixe "data:application/pdf;base64,"
+        </div>
+    </div>
+
+    <button type="submit">Envoyer pour signature</button>
+</form>
+
+<div class="example">
+    <strong>Exemple de Base64 valide (début) :</strong><br/>
+    JVBERi0xLjQKJeLjz9MKMSAwIG9iago8PC9UeXBlIC9DYXRhbG9nL1BhZ2VzIDIgMCBSPj4KZW5kb2JqCjIgMCBvYmo8PC9UeXBlIC9QYWdlcy9LaWRzIFs...
+</div>
+
+</body>
+</html>

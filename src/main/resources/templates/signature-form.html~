@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+<head>
+    <title>Envoyer un document à signer</title>
+</head>
+<body>
+<h1>Signature via OKSign (itsme)</h1>
+<form th:action="@{/web/submit}" method="post">
+    <label>
+        <input type="text" name="firstName" placeholder="Prénom" required/>
+    </label><br/>
+    <label>
+        <input type="text" name="lastName" placeholder="Nom" required/>
+    </label><br/>
+    <label>
+        <input type="email" name="email" placeholder="Email" required/>
+    </label><br/>
+    <label>
+        <input type="text" name="gsm" placeholder="GSM (format +32...)" required/>
+    </label><br/>
+    <label>
+        <input type="text" name="fileName" placeholder="Nom du fichier" required/>
+    </label><br/>
+    <label>
+        <textarea name="base64Content" placeholder="Base64 du document" rows="6" cols="40" required></textarea>
+    </label><br/>
+    <button type="submit">Envoyer</button>
+</form>
+</body>
+</html>

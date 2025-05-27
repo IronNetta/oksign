@@ -1,0 +1,4 @@
+package org.seba.oksign.service;
+
+public class ItsmeDocumentService {
+}
