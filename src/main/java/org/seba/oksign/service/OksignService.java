@@ -26,6 +26,7 @@ public class OksignService {
         }
 
         // 2. ÉTAPE 2: Upload du FormDescriptor avec les champs de signature
+        // La réponse contient directement l'URL de signature
         return uploadFormDescriptor(docId, request);
     }
 
@@ -112,6 +113,7 @@ public class OksignService {
             ResponseEntity<String> response = restTemplate.postForEntity(url, entity, String.class);
             log.info("Response FormDescriptor: {}", response.getBody());
 
+            // Retourner la réponse avec le formDescId
             return response;
 
         } catch (Exception e) {
@@ -148,4 +150,5 @@ public class OksignService {
 
         return cleaned;
     }
+
 }

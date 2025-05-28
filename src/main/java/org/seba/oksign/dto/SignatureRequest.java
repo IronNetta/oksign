@@ -8,6 +8,6 @@ public class SignatureRequest {
     private String lastName;
     private String email;
     private String gsm;
-    private String fileName;
-    private String base64Content;
+    private String fileName = "document-signature.pdf"; // Valeur par défaut
+    private String base64Content; // Optionnel
 }

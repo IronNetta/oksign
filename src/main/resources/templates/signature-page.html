@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+<head>
+    <title>Signature du Document</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .document-info {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .document-info h2 {
+            margin-top: 0;
+            color: #333;
+        }
+        .info-row {
+            margin: 10px 0;
+            display: flex;
+            justify-content: space-between;
+        }
+        .info-label {
+            font-weight: bold;
+            color: #666;
+        }
+        .pdf-preview {
+            border: 1px solid #ddd;
+            margin-bottom: 20px;
+            background-color: #f9f9f9;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        iframe {
+            width: 100%;
+            height: 500px;
+            border: none;
+        }
+        .signature-section {
+            background-color: #f0f8ff;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .signature-section h3 {
+            margin-top: 0;
+            color: #2c5aa0;
+        }
+        #signatureCanvas {
+            border: 2px solid #2c5aa0;
+            border-radius: 5px;
+            background-color: white;
+            cursor: crosshair;
+            display: block;
+            margin: 20px auto;
+        }
+        .button-group {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .button {
+            padding: 12px 24px;
+            margin: 0 10px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .button-primary {
+            background-color: #2c5aa0;
+            color: white;
+        }
+        .button-primary:hover {
+            background-color: #1e3d6f;
+        }
+        .button-secondary {
+            background-color: #e74c3c;
+            color: white;
+        }
+        .button-secondary:hover {
+            background-color: #c0392b;
+        }
+        .button-success {
+            background-color: #27ae60;
+            color: white;
+        }
+        .button-success:hover {
+            background-color: #219a52;
+        }
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+        .loading.active {
+            display: block;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #2c5aa0;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Signature du Document</h1>
+        
+        <div class="document-info">
+            <h2>Informations du Document</h2>
+            <div class="info-row">
+                <span class="info-label">Nom :</span>
+                <span th:text="${lastName}"></span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Prénom :</span>
+                <span th:text="${firstName}"></span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Email :</span>
+                <span th:text="${email}"></span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Téléphone :</span>
+                <span th:text="${gsm}"></span>
+            </div>
+        </div>
+
+        <div class="pdf-preview">
+            <h3>Aperçu du Document</h3>
+            <iframe th:src="'data:application/pdf;base64,' + ${pdfBase64}"></iframe>
+        </div>
+
+        <div class="signature-section">
+            <h3>Veuillez signer ci-dessous</h3>
+            <p>Utilisez votre souris ou votre doigt pour dessiner votre signature dans le cadre ci-dessous.</p>
+            <canvas id="signatureCanvas" width="600" height="200"></canvas>
+            
+            <div class="button-group">
+                <button class="button button-secondary" onclick="clearSignature()">Effacer</button>
+                <button class="button button-success" onclick="submitSignature()">Signer le Document</button>
+            </div>
+        </div>
+
+        <div class="loading" id="loadingDiv">
+            <div class="spinner"></div>
+            <p>Génération du document signé en cours...</p>
+        </div>
+    </div>
+
+    <form id="signatureForm" th:action="@{/web/sign-document}" method="post" style="display: none;">
+        <input type="hidden" name="firstName" th:value="${firstName}">
+        <input type="hidden" name="lastName" th:value="${lastName}">
+        <input type="hidden" name="email" th:value="${email}">
+        <input type="hidden" name="gsm" th:value="${gsm}">
+        <input type="hidden" name="base64Content" th:value="${originalBase64}">
+        <input type="hidden" name="signatureImage" id="signatureImage">
+    </form>
+
+    <script>
+        const canvas = document.getElementById('signatureCanvas');
+        const ctx = canvas.getContext('2d');
+        let isDrawing = false;
+        let lastX = 0;
+        let lastY = 0;
+
+        // Configuration du canvas
+        ctx.strokeStyle = '#000000';
+        ctx.lineWidth = 2;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+
+        // Mouse events
+        canvas.addEventListener('mousedown', startDrawing);
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('mouseup', stopDrawing);
+        canvas.addEventListener('mouseout', stopDrawing);
+
+        // Touch events pour mobile
+        canvas.addEventListener('touchstart', handleTouch);
+        canvas.addEventListener('touchmove', handleTouch);
+        canvas.addEventListener('touchend', stopDrawing);
+
+        function startDrawing(e) {
+            isDrawing = true;
+            const rect = canvas.getBoundingClientRect();
+            lastX = e.clientX - rect.left;
+            lastY = e.clientY - rect.top;
+        }
+
+        function draw(e) {
+            if (!isDrawing) return;
+            
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            ctx.beginPath();
+            ctx.moveTo(lastX, lastY);
+            ctx.lineTo(x, y);
+            ctx.stroke();
+
+            lastX = x;
+            lastY = y;
+        }
+
+        function stopDrawing() {
+            isDrawing = false;
+        }
+
+        function handleTouch(e) {
+            e.preventDefault();
+            const touch = e.touches[0];
+            const mouseEvent = new MouseEvent(e.type === 'touchstart' ? 'mousedown' : 
+                                            e.type === 'touchmove' ? 'mousemove' : 'mouseup', {
+                clientX: touch.clientX,
+                clientY: touch.clientY
+            });
+            canvas.dispatchEvent(mouseEvent);
+        }
+
+        function clearSignature() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+
+        function isCanvasEmpty() {
+            const pixelData = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+            for (let i = 3; i < pixelData.length; i += 4) {
+                if (pixelData[i] !== 0) return false;
+            }
+            return true;
+        }
+
+        function submitSignature() {
+            if (isCanvasEmpty()) {
+                alert('Veuillez signer le document avant de soumettre.');
+                return;
+            }
+
+            // Convertir la signature en base64
+            const signatureDataUrl = canvas.toDataURL('image/png');
+            document.getElementById('signatureImage').value = signatureDataUrl;
+            
+            // Afficher le loader
+            document.getElementById('loadingDiv').classList.add('active');
+            
+            // Soumettre le formulaire
+            document.getElementById('signatureForm').submit();
+        }
+    </script>
+</body>
+</html>

@@ -1,11 +1,149 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="fr">
 <head>
-    <title>Résultat</title>
+    <title>Résultat de la Signature</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .error {
+            color: red;
+            padding: 20px;
+            background-color: #ffe6e6;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border: 1px solid #ffcccc;
+        }
+        .success {
+            color: green;
+            padding: 20px;
+            background-color: #e6ffe6;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border: 1px solid #ccffcc;
+        }
+        .info {
+            padding: 20px;
+            background-color: #e7f3ff;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border: 1px solid #cce7ff;
+        }
+        .response-details {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            border: 1px solid #dee2e6;
+            font-family: monospace;
+            white-space: pre-wrap;
+            overflow-x: auto;
+        }
+        .button {
+            background-color: #007bff;
+            color: white;
+            padding: 14px 28px;
+            margin: 8px 4px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            text-decoration: none;
+            display: inline-block;
+            transition: background-color 0.3s;
+        }
+        .button:hover {
+            background-color: #0056b3;
+        }
+        .button-success {
+            background-color: #28a745;
+        }
+        .button-success:hover {
+            background-color: #218838;
+        }
+        .signing-link {
+            display: inline-block;
+            margin: 20px 0;
+            padding: 15px 30px;
+            background-color: #28a745;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .signing-link:hover {
+            background-color: #218838;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .step-info {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+    </style>
 </head>
 <body>
-<h1>Réponse de OKSign</h1>
-<pre th:text="${response}"></pre>
-<a th:href="@{/web/form}">Retour</a>
+    <div class="container">
+        <h1>Processus de Signature OKSign</h1>
+        
+        <div th:if="${error}" class="error">
+            <strong>Erreur:</strong> <span th:text="${error}"></span>
+        </div>
+        
+        <div th:if="${statusCode == 200}" class="success">
+            <strong>Succès!</strong> Le document a été envoyé à OKSign pour signature.
+        </div>
+        
+        <div th:if="${signingUrl}" class="info">
+            <h2>Document prêt à signer!</h2>
+            <p style="font-size: 18px; margin: 20px 0;">
+                Votre document a été préparé et est maintenant prêt pour la signature électronique via itsme.
+            </p>
+            
+            <div style="text-align: center; margin: 30px 0;">
+                <a th:href="${signingUrl}" class="signing-link">
+                    🖊️ Signer Maintenant avec itsme
+                </a>
+            </div>
+            
+            <div class="step-info">
+                <h3>Ce qui va se passer :</h3>
+                <ol style="text-align: left;">
+                    <li>Vous serez redirigé vers la plateforme de signature OKSign</li>
+                    <li>L'authentification itsme s'ouvrira automatiquement</li>
+                    <li>Confirmez votre identité sur votre smartphone via l'app itsme</li>
+                    <li>Signez le document directement dans votre navigateur</li>
+                    <li>Recevez votre document signé immédiatement</li>
+                </ol>
+                <p><strong>Temps estimé :</strong> 2-3 minutes</p>
+            </div>
+        </div>
+        
+        <div th:if="${response}" class="response-details">
+            <h3>Détails de la réponse OKSign :</h3>
+            <span th:text="${response}"></span>
+        </div>
+        
+        <div style="text-align: center; margin-top: 30px;">
+            <a th:href="@{/web/form}" class="button">Créer un Nouveau Document</a>
+        </div>
+    </div>
 </body>
 </html>
