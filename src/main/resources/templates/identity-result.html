@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Résultat de la vérification</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            background: #4caf50;
+            border-radius: 50%;
+            margin: 0 auto 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 40px;
+        }
+
+        .error-icon {
+            width: 80px;
+            height: 80px;
+            background: #f44336;
+            border-radius: 50%;
+            margin: 0 auto 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 40px;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 28px;
+        }
+
+        .message {
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 30px;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .success-message {
+            background: #e8f5e8;
+            color: #2d6a2d;
+            border-left: 4px solid #4caf50;
+        }
+
+        .error-message {
+            background: #fde8e8;
+            color: #721c24;
+            border-left: 4px solid #f44336;
+        }
+
+        .instructions {
+            background: #f0f8ff;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            text-align: left;
+        }
+
+        .instructions h3 {
+            color: #0066cc;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .instructions ol {
+            padding-left: 20px;
+            color: #555;
+        }
+
+        .instructions li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+
+        .back-button {
+            background: linear-gradient(135deg, #0066cc, #004499);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            box-shadow: 0 5px 15px rgba(0, 102, 204, 0.3);
+        }
+
+        .back-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 102, 204, 0.4);
+        }
+
+        .qr-info {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 30px 20px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <!-- Succès -->
+    <div th:if="${success}">
+        <div class="success-icon">✓</div>
+        <h1>QR Code généré !</h1>
+
+        <div class="status-indicator status-pending">
+            En attente de scan
+        </div>
+
+        <div class="message success-message" th:text="${message}">
+            QR Code itsme généré ! Consultez votre email pour le lien de vérification.
+        </div>
+
+        <div class="instructions">
+            <h3>Prochaines étapes :</h3>
+            <ol>
+                <li>Consultez votre boîte email</li>
+                <li>Cliquez sur le lien reçu</li>
+                <li>Scannez le QR code avec votre app <strong>itsme</strong></li>
+                <li>Confirmez votre identité sur votre smartphone</li>
+                <li>Votre vérification sera confirmée automatiquement</li>
+            </ol>
+        </div>
+
+        <div class="qr-info">
+            📱 <strong>Important :</strong> Assurez-vous d'avoir l'application itsme installée sur votre smartphone avant de scanner le QR code.
+        </div>
+    </div>
+
+    <!-- Erreur -->
+    <div th:unless="${success}">
+        <div class="error-icon">✗</div>
+        <h1>Erreur</h1>
+
+        <div class="status-indicator status-error">
+            Échec de la génération
+        </div>
+
+        <div class="message error-message" th:text="${message}">
+            Une erreur s'est produite lors de la génération du QR Code.
+        </div>
+
+        <div class="instructions">
+            <h3>Que faire :</h3>
+            <ol>
+                <li>Vérifiez que vos informations sont correctes</li>
+                <li>Assurez-vous que votre numéro de téléphone est au format international</li>
+                <li>Réessayez dans quelques instants</li>
+                <li>Contactez le support si le problème persiste</li>
+            </ol>
+        </div>
+    </div>
+
+    <a th:href="@{/identity/verify}" class="back-button">
+        ← Nouvelle vérification
+    </a>
+</div>
+
+<script>
+    // Auto-refresh pour vérifier le statut (optionnel)
+    if (window.location.search.includes('success=true')) {
+        console.log('QR Code généré - En attente de scan...');
+        // Ici vous pourriez ajouter du polling AJAX pour vérifier si l'identité a été confirmée
+    }
+</script>
+</body>
+</html>

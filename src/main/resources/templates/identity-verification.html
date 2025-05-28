@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vérification d'identité itsme</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .itsme-logo {
+            width: 80px;
+            height: 80px;
+            background: #0066cc;
+            border-radius: 50%;
+            margin: 0 auto 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 32px;
+            font-weight: bold;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 40px;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
+        }
+
+        input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #0066cc;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+        }
+
+        .big-button {
+            background: linear-gradient(135deg, #0066cc, #004499);
+            color: white;
+            border: none;
+            padding: 20px 50px;
+            font-size: 20px;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 20px rgba(0, 102, 204, 0.3);
+            margin-top: 20px;
+            width: 100%;
+        }
+
+        .big-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px rgba(0, 102, 204, 0.4);
+        }
+
+        .big-button:active {
+            transform: translateY(0);
+        }
+
+        .qr-icon {
+            display: inline-block;
+            margin-right: 10px;
+            font-size: 24px;
+        }
+
+        .help-text {
+            font-size: 13px;
+            color: #999;
+            margin-top: 5px;
+            font-style: italic;
+        }
+
+        .security-badge {
+            background: #e8f5e8;
+            color: #2d6a2d;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            font-size: 14px;
+            border-left: 4px solid #4caf50;
+        }
+
+        .feature-list {
+            text-align: left;
+            margin: 30px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .feature-list h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .feature-list ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .feature-list li {
+            margin-bottom: 10px;
+            padding-left: 25px;
+            position: relative;
+            color: #555;
+        }
+
+        .feature-list li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #4caf50;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 30px 20px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .big-button {
+                padding: 18px 40px;
+                font-size: 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="itsme-logo">
+        itsme
+    </div>
+
+    <h1>Vérification d'identité</h1>
+    <p class="subtitle">
+        Confirmez votre identité de manière sécurisée avec itsme.<br>
+        Un QR code sera généré pour votre smartphone.
+    </p>
+
+    <div class="security-badge">
+        🔒 <strong>Sécurisé</strong> - Vos données sont protégées par le système itsme certifié en Belgique
+    </div>
+
+    <form th:action="@{/identity/generate-qr}" method="post">
+        <div class="form-group">
+            <label for="firstName">Prénom</label>
+            <input type="text" id="firstName" name="firstName" placeholder="Jean" required>
+        </div>
+
+        <div class="form-group">
+            <label for="lastName">Nom de famille</label>
+            <input type="text" id="lastName" name="lastName" placeholder="Dupont" required>
+        </div>
+
+        <div class="form-group">
+            <label for="email">Adresse email</label>
+            <input type="email" id="email" name="email" placeholder="jean.dupont@email.com" required>
+            <div class="help-text">Vous recevrez le lien de vérification par email</div>
+        </div>
+
+        <div class="form-group">
+            <label for="gsm">Numéro de téléphone</label>
+            <input type="tel" id="gsm" name="gsm" placeholder="+32489123456" required>
+            <div class="help-text">Format international avec l'indicatif pays (+32 pour la Belgique)</div>
+        </div>
+
+        <button type="submit" class="big-button">
+            <span class="qr-icon">📱</span>
+            Générer le QR Code itsme
+        </button>
+    </form>
+
+    <div class="feature-list">
+        <h3>Comment ça marche :</h3>
+        <ul>
+            <li>Remplissez vos informations ci-dessus</li>
+            <li>Un QR code sera généré et envoyé par email</li>
+            <li>Scannez le QR code avec votre app itsme</li>
+            <li>Confirmez votre identité sur votre smartphone</li>
+            <li>Votre identité sera vérifiée instantanément</li>
+        </ul>
+    </div>
+</div>
+</body>
+</html>
