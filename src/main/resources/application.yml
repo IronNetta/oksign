@@ -1,5 +1,5 @@
 oksign:
-  api-key: 118165;181921-C3703678-91AE-8916-F822-A5F0B97E8434;dev-test-itsme-backend
+  api-key: <devine>
   base-url: https://www.oksign.be/services/rest/v1/
   webhook-secret: your-oksign-webhook-secret
 
